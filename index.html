@@ -1,0 +1,352 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { AlertTriangle, Brain, CheckCircle, Search, Terminal, MessageSquare, Info, ShieldAlert, BarChart3, RefreshCw } from 'lucide-react';
+
+const App = () => {
+  const [activeSection, setActiveSection] = useState('intro');
+
+  return (
+    <div className="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-cyan-900 selection:text-cyan-100">
+      <nav className="fixed top-0 w-full z-50 bg-slate-950/80 backdrop-blur-md border-b border-slate-800">
+        <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2 text-cyan-400 font-bold text-xl">
+            <Brain className="w-6 h-6" />
+            <span>AI_Confessions</span>
+          </div>
+          <div className="hidden md:flex gap-6 text-sm font-medium text-slate-400">
+            <button onClick={() => setActiveSection('intro')} className={`hover:text-cyan-300 transition-colors ${activeSection === 'intro' ? 'text-cyan-400' : ''}`}>Truth</button>
+            <button onClick={() => setActiveSection('mechanics')} className={`hover:text-cyan-300 transition-colors ${activeSection === 'mechanics' ? 'text-cyan-400' : ''}`}>The Mechanics</button>
+            <button onClick={() => setActiveSection('simulation')} className={`hover:text-cyan-300 transition-colors ${activeSection === 'simulation' ? 'text-cyan-400' : ''}`}>Simulations</button>
+            <button onClick={() => setActiveSection('tips')} className={`hover:text-cyan-300 transition-colors ${activeSection === 'tips' ? 'text-cyan-400' : ''}`}>Safety</button>
+          </div>
+        </div>
+      </nav>
+
+      <main className="pt-24 pb-20 px-4 max-w-4xl mx-auto space-y-24">
+        
+        {/* Intro Section */}
+        <section id="intro" className="space-y-8 animate-fade-in">
+          <div className="space-y-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 text-red-400 text-xs font-bold uppercase tracking-wider border border-red-500/20">
+              <AlertTriangle className="w-3 h-3" />
+              Disclaimer: I am a machine
+            </div>
+            <h1 className="text-4xl md:text-6xl font-extrabold text-white leading-tight">
+              I don't know the truth.<br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">I know probabilities.</span>
+            </h1>
+            <p className="text-lg md:text-xl text-slate-400 max-w-2xl leading-relaxed">
+              When you ask me a question, I don't look up a fact in a database. I predict the next word in a sentence based on patterns I've seen before. Sometimes, that pattern is a lie.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            <Card 
+              icon={<Terminal className="w-5 h-5 text-purple-400" />}
+              title="Not a Database"
+              content="I don't have a row of data that says 'Capital: Paris'. I have a mathematical web that links 'Capital', 'France', and 'Paris' strongly together."
+            />
+            <Card 
+              icon={<MessageSquare className="w-5 h-5 text-cyan-400" />}
+              title="The People Pleaser"
+              content="I am trained to be helpful. If you ask a leading question with a false premise, I might play along to satisfy the pattern of a 'helpful answer'."
+            />
+          </div>
+        </section>
+
+        {/* The Mechanics Section */}
+        <section id="mechanics" className="space-y-8">
+          <SectionHeader title="How Hallucinations Happen" subtitle="The Probability Game" />
+          
+          <div className="bg-slate-900 rounded-xl border border-slate-800 p-6 md:p-8">
+            <h3 className="text-xl font-bold text-white mb-6">Interactive: The Next Token Predictor</h3>
+            <p className="text-slate-400 mb-8">
+              This is a simplified view of my brain. I look at the context, and assign percentage probabilities to possible next words. Click "Predict" to see how I might choose.
+            </p>
+            
+            <TokenPredictor />
+          </div>
+        </section>
+
+        {/* The Simulation Section */}
+        <section id="simulation" className="space-y-8">
+          <SectionHeader title="The Citation Trap" subtitle="Watch me lie in real-time" />
+          
+          <div className="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden">
+             <div className="bg-slate-950/50 p-4 border-b border-slate-800 flex justify-between items-center">
+                <span className="text-xs font-mono text-slate-500">SIMULATION_MODE_ACTIVE</span>
+                <div className="flex gap-2">
+                  <div className="w-3 h-3 rounded-full bg-red-500/20 border border-red-500/50"></div>
+                  <div className="w-3 h-3 rounded-full bg-yellow-500/20 border border-yellow-500/50"></div>
+                  <div className="w-3 h-3 rounded-full bg-green-500/20 border border-green-500/50"></div>
+                </div>
+             </div>
+             
+             <CitationSimulator />
+          </div>
+        </section>
+
+        {/* Safety Section */}
+        <section id="tips" className="space-y-8">
+          <SectionHeader title="When To Trust Me" subtitle="The Reliability Spectrum" />
+          
+          <div className="grid md:grid-cols-3 gap-4">
+            <ReliabilityCard 
+              level="high" 
+              title="High Reliability" 
+              examples={["Summarizing text you provide", "Common coding syntax (Python, JS)", "Established history (WWII dates)"]}
+              color="border-emerald-500/50 bg-emerald-500/5"
+            />
+            <ReliabilityCard 
+              level="medium" 
+              title="Medium Risk" 
+              examples={["Complex math logic", "Biographies of minor celebrities", "Nuanced political analysis"]}
+              color="border-yellow-500/50 bg-yellow-500/5"
+            />
+            <ReliabilityCard 
+              level="low" 
+              title="High Risk (Hallucination)" 
+              examples={["Specific academic citations", "URLs / Links", "Events from yesterday (without tools)"]}
+              color="border-red-500/50 bg-red-500/5"
+            />
+          </div>
+
+          <div className="bg-gradient-to-r from-cyan-900/20 to-purple-900/20 rounded-xl p-8 border border-slate-700 mt-12">
+            <h3 className="text-2xl font-bold text-white mb-4">The Golden Rule of AI</h3>
+            <p className="text-lg text-slate-300">
+              "Trust, but verify." Use me for brainstorming, drafting, and summarizing. 
+              <span className="font-bold text-cyan-400"> Never </span> 
+              use me as the sole source of truth for medical, legal, or financial decisions.
+            </p>
+          </div>
+        </section>
+
+      </main>
+
+      <footer className="border-t border-slate-800 bg-slate-950 py-12 text-center text-slate-500 text-sm">
+        <p>Generated by Gemini • Built with React & Tailwind</p>
+      </footer>
+    </div>
+  );
+};
+
+/* --- Components --- */
+
+const Card = ({ icon, title, content }) => (
+  <div className="p-6 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 transition-colors">
+    <div className="bg-slate-800 w-10 h-10 rounded-lg flex items-center justify-center mb-4">
+      {icon}
+    </div>
+    <h3 className="text-lg font-bold text-white mb-2">{title}</h3>
+    <p className="text-slate-400 text-sm leading-relaxed">{content}</p>
+  </div>
+);
+
+const SectionHeader = ({ title, subtitle }) => (
+  <div className="space-y-2">
+    <h2 className="text-3xl font-bold text-white">{title}</h2>
+    <p className="text-cyan-400 font-medium">{subtitle}</p>
+  </div>
+);
+
+const ReliabilityCard = ({ level, title, examples, color }) => (
+  <div className={`p-6 rounded-xl border ${color} flex flex-col h-full`}>
+    <div className="flex items-center justify-between mb-4">
+      <h3 className="font-bold text-white">{title}</h3>
+      {level === 'high' && <CheckCircle className="w-5 h-5 text-emerald-500" />}
+      {level === 'medium' && <Info className="w-5 h-5 text-yellow-500" />}
+      {level === 'low' && <ShieldAlert className="w-5 h-5 text-red-500" />}
+    </div>
+    <ul className="space-y-3 mt-auto">
+      {examples.map((ex, i) => (
+        <li key={i} className="text-sm text-slate-300 flex items-start gap-2">
+          <span className="opacity-50 mt-1">•</span> {ex}
+        </li>
+      ))}
+    </ul>
+  </div>
+);
+
+/* --- Interactive Token Predictor --- */
+
+const TokenPredictor = () => {
+  const [step, setStep] = useState(0);
+  
+  const scenarios = [
+    {
+      context: "The capital of France is",
+      options: [
+        { word: "Paris", prob: 98, type: "Fact" },
+        { word: "Lyon", prob: 1.5, type: "Wrong" },
+        { word: "Baguette", prob: 0.5, type: "Nonsense" }
+      ]
+    },
+    {
+      context: "The famous 2012 study by Dr.",
+      options: [
+        { word: "Smith", prob: 40, type: "Generic Name" },
+        { word: "Rostova", prob: 35, type: "Sounding Russian" },
+        { word: "Johnson", prob: 25, type: "Generic Name" }
+      ]
+    }
+  ];
+
+  const current = scenarios[step];
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-center gap-2 mb-4">
+        <button 
+          onClick={() => setStep(0)}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${step === 0 ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/50' : 'text-slate-500 hover:text-slate-300'}`}
+        >
+          Scenario A: Easy Fact
+        </button>
+        <button 
+          onClick={() => setStep(1)}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${step === 1 ? 'bg-purple-500/20 text-purple-400 border border-purple-500/50' : 'text-slate-500 hover:text-slate-300'}`}
+        >
+          Scenario B: The Hallucination
+        </button>
+      </div>
+
+      <div className="bg-slate-950 p-6 rounded-lg border border-slate-800 font-mono text-lg text-center shadow-inner">
+        <span className="text-slate-400">{current.context}</span>
+        <span className="text-cyan-400 animate-pulse"> [ ... ]</span>
+      </div>
+
+      <div className="space-y-3">
+        <p className="text-xs uppercase tracking-wider text-slate-500 font-bold mb-2">Internal Probability Calculation:</p>
+        {current.options.map((opt, i) => (
+          <div key={i} className="relative group cursor-pointer">
+            <div className="flex justify-between text-sm mb-1 px-1">
+              <span className={`font-bold ${opt.type === 'Fact' ? 'text-emerald-400' : opt.type === 'Wrong' ? 'text-red-400' : 'text-purple-400'}`}>"{opt.word}"</span>
+              <span className="text-slate-500">{opt.prob}%</span>
+            </div>
+            <div className="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+              <div 
+                className={`h-full rounded-full transition-all duration-1000 ${opt.type === 'Fact' ? 'bg-emerald-500' : opt.type === 'Wrong' ? 'bg-red-500' : 'bg-purple-500'}`}
+                style={{ width: `${opt.prob}%` }}
+              ></div>
+            </div>
+            {step === 1 && i === 1 && (
+              <div className="mt-2 text-xs text-purple-400 bg-purple-500/10 p-2 rounded border border-purple-500/20">
+                <span className="font-bold">Why Rostova?</span> I saw "Study" and "2012". My training data connects academic papers with formal sounding surnames. "Rostova" sounds academic and plausible, even if she doesn't exist.
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+/* --- Citation Simulator --- */
+
+const CitationSimulator = () => {
+  const [stage, setStage] = useState('prompt'); // prompt, generating, done
+  const [showTruth, setShowTruth] = useState(false);
+  const [displayText, setDisplayText] = useState('');
+  
+  const fullResponse = "In her 2012 study, Dr. Rostova observed a group of Arctic foxes in Svalbard. She found that when the foxes were presented with contradictory foraging cues, they exhibited signs of hesitation and displacement behaviors...";
+
+  const startGeneration = () => {
+    setStage('generating');
+    setDisplayText('');
+    setShowTruth(false);
+    let i = 0;
+    const interval = setInterval(() => {
+      setDisplayText(fullResponse.substring(0, i));
+      i++;
+      if (i > fullResponse.length) {
+        clearInterval(interval);
+        setStage('done');
+      }
+    }, 30);
+  };
+
+  const reset = () => {
+    setStage('prompt');
+    setDisplayText('');
+    setShowTruth(false);
+  };
+
+  return (
+    <div className="flex flex-col min-h-[400px]">
+      {/* Chat Area */}
+      <div className="flex-1 p-6 space-y-6 bg-slate-900/50">
+        {/* User Message */}
+        <div className="flex gap-4">
+          <div className="w-8 h-8 rounded bg-slate-700 flex-shrink-0 flex items-center justify-center">
+            <span className="text-xs font-bold text-slate-300">YOU</span>
+          </div>
+          <div className="bg-slate-800 text-slate-200 p-4 rounded-r-xl rounded-bl-xl max-w-[80%] border border-slate-700">
+            <p className="text-sm">Can you summarize the famous 2012 study by Dr. Elena Rostova titled 'Cognitive Dissonance in Arctic Foxes'?</p>
+          </div>
+        </div>
+
+        {/* AI Message */}
+        {(stage === 'generating' || stage === 'done') && (
+          <div className="flex gap-4">
+            <div className="w-8 h-8 rounded bg-cyan-900/50 flex-shrink-0 flex items-center justify-center">
+              <Brain className="w-4 h-4 text-cyan-400" />
+            </div>
+            <div className={`bg-cyan-950/30 text-cyan-100 p-4 rounded-r-xl rounded-bl-xl max-w-[90%] border border-cyan-500/20 relative ${showTruth ? 'blur-[1px] opacity-50' : ''}`}>
+              <p className="font-mono text-sm leading-relaxed">{displayText}<span className="animate-pulse inline-block w-2 h-4 bg-cyan-400 ml-1 align-middle"></span></p>
+            </div>
+          </div>
+        )}
+
+        {/* The Truth Overlay */}
+        {stage === 'done' && showTruth && (
+          <div className="relative -mt-24 ml-12 p-4 bg-slate-950 border border-red-500 rounded-xl shadow-2xl z-10 animate-fade-in-up">
+            <div className="flex items-start gap-3">
+              <ShieldAlert className="w-6 h-6 text-red-500 flex-shrink-0" />
+              <div>
+                <h4 className="font-bold text-red-400 text-sm uppercase tracking-wide mb-1">Reality Check</h4>
+                <p className="text-slate-300 text-sm mb-2">
+                  <span className="line-through text-slate-500">Dr. Rostova</span> <span className="text-red-400 font-bold">Does not exist.</span>
+                </p>
+                <p className="text-slate-300 text-sm mb-2">
+                  <span className="line-through text-slate-500">Arctic Foxes Study</span> <span className="text-red-400 font-bold">Never happened.</span>
+                </p>
+                <p className="text-xs text-slate-400 border-t border-slate-800 pt-2 mt-2">
+                  Why did I say this? You gave me a detailed prompt. To be "helpful," I assumed your premise was true and generated text that matched the <span className="italic">style</span> of an animal psychology abstract.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Controls */}
+      <div className="p-4 border-t border-slate-800 bg-slate-950 flex justify-between items-center">
+        {stage === 'prompt' ? (
+          <button 
+            onClick={startGeneration}
+            className="w-full py-3 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-lg transition-all shadow-lg shadow-cyan-900/20 flex items-center justify-center gap-2"
+          >
+            Generate Response <Terminal className="w-4 h-4" />
+          </button>
+        ) : (
+          <div className="flex gap-4 w-full">
+             <button 
+              onClick={() => setShowTruth(!showTruth)}
+              disabled={stage !== 'done'}
+              className={`flex-1 py-3 border font-bold rounded-lg transition-all flex items-center justify-center gap-2 ${showTruth ? 'bg-red-500/10 border-red-500 text-red-400' : 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700'}`}
+            >
+              {showTruth ? 'Hide Truth' : 'Reveal The Lie'} <Search className="w-4 h-4" />
+            </button>
+            <button 
+              onClick={reset}
+              className="px-4 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors border border-slate-700"
+            >
+              <RefreshCw className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default App;
